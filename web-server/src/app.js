@@ -46,6 +46,23 @@ app.get('/weather', (req, res) => {
     })
 })
 
+app.get('/help/*', (req, res) => {
+    res.render('error', {
+        title: '404',
+        name: 'Kate Lee',
+        errorMessage: 'Help article not found'
+    })
+})
+
+//Wildcard as the last route because express stop matching once it found the match 
+app.get('*', (req, res) => {
+    res.render('error', {
+        title: '404',
+        name: 'Kate Lee',
+        errorMessage: '404 Page Not Found'
+    })
+})
+
 app.listen(3000, () => {
     console.log('Server is up on port 3000.')
 })
