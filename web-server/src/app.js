@@ -1,6 +1,8 @@
 const path = require('path')
 const express = require('express')
 const hbs = require('hbs')
+const forecast = require('./utils/forecast')
+const geocode = require('./utils/geocode')
 
 const app = express()
 
@@ -18,10 +20,10 @@ hbs.registerPartials(partialsPath)
 app.use(express.static(publicDirectoryPath))
 
 app.get('', (req, res) => {
-   res.render('index', {
-       title: 'Weather App',
-       name: 'Kate Lee'
-   })
+    res.render('index', {
+        title: 'Weather App',
+        name: 'Kate Lee'
+    })
 })
 
 app.get('/about', (req, res) => {
@@ -40,9 +42,44 @@ app.get('/help', (req, res) => {
 })
 
 app.get('/weather', (req, res) => {
+    if (!req.query.address) {
+        return res.send({
+            error: 'Please provide an address'
+        })
+    } 
+        geocode(req.query.address, (error, {latitude, longitude, location}) => {
+            if (error) {
+                return res.send({ error })
+            }
+
+            forecast(latitude, longitude, (error, forecastData) => {
+                if (error) {
+                    return res.send({ error })
+                }
+
+                res.send({
+                    forecast: forecastData,
+                    location,
+                    address: req.query.address
+                })
+            })
+        })
+    
+
+
+})
+
+// 'Cannot set header' error occurs when two responses are sent 
+app.get('/products', (req, res) => {
+    if (!req.query.search) {
+        //'return' stop function execution
+        return res.send({
+            error: 'You must provide a search term'
+        })
+    }
+    console.log(req.query.search)
     res.send({
-        location: 'A location string',
-        forecast: 'A forecast string'
+        products: []
     })
 })
 
