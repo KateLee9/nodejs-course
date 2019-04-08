@@ -47,7 +47,7 @@ app.get('/weather', (req, res) => {
             error: 'Please provide an address'
         })
     } 
-        geocode(req.query.address, (error, {latitude, longitude, location}) => {
+        geocode(req.query.address, (error, {latitude, longitude, location} = {}) => {
             if (error) {
                 return res.send({ error })
             }
@@ -65,8 +65,6 @@ app.get('/weather', (req, res) => {
             })
         })
     
-
-
 })
 
 // 'Cannot set header' error occurs when two responses are sent 
